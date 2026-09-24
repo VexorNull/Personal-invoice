@@ -478,20 +478,18 @@
         // Convert number to words helper
         function numberToWords(num) {
             if (num === 0) return 'Zero Rupees';
-            // Simple robust formatter or amount words representation
             return num.toLocaleString() + ' Rupees';
         }
 
         // LocalStorage History Management
         function saveToLocalStorage(invoiceData) {
             let history = JSON.parse(localStorage.getItem('office_invoices_history') || '[]');
-            // Check if latest already exists by invNo, update or push
             const existingIndex = history.findIndex(h => h.invNo === invoiceData.invNo);
             if (existingIndex >= 0) {
                 history[existingIndex] = invoiceData;
             } else {
                 history.unshift(invoiceData);
-                if (history.length > 20) history.pop(); // keep last 20
+                if (history.length > 20) history.pop();
             }
             localStorage.setItem('office_invoices_history', JSON.stringify(history));
         }
@@ -551,16 +549,26 @@
             showToast('History cleared.');
         }
 
-        // Download as JPG using html2canvas
+        // Download as JPG using html2canvas (Fixed cut-off issue)
         function downloadJPG() {
             const receiptElement = document.getElementById('printable-receipt');
             showToast('Generating high-quality JPG image...', 'info');
             
+            // Add a temporary clean bottom padding to avoid border clipping during canvas rendering
+            receiptElement.style.paddingBottom = '30px';
+
             html2canvas(receiptElement, {
-                scale: 2,
+                scale: 3,
+                useCORS: true,
+                allowTaint: true,
                 backgroundColor: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
-                logging: false
+                windowWidth: receiptElement.scrollWidth,
+                windowHeight: receiptElement.scrollHeight,
+                scrollY: -window.scrollY
             }).then(canvas => {
+                // Reset padding back
+                receiptElement.style.paddingBottom = '';
+
                 const link = document.createElement('a');
                 link.download = `Expense-Receipt-${document.getElementById('invoice-no').value || 'Voucher'}.jpg`;
                 link.href = canvas.toDataURL('image/jpeg', 0.95);
@@ -568,6 +576,7 @@
                 showToast('Receipt saved as JPG successfully!');
             }).catch(err => {
                 console.error(err);
+                receiptElement.style.paddingBottom = '';
                 showToast('Error generating image.', 'error');
             });
         }
