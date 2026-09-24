@@ -235,8 +235,8 @@
         <div class="lg:col-span-5 space-y-6">
             <div class="sticky top-20 space-y-4">
                 
-                <!-- Printable Receipt Card with Increased Padding and Bottom Buffer -->
-                <div id="printable-receipt" class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 pb-10 shadow-md border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 transition-all">
+                <!-- Printable Receipt Card with Massive Bottom Padding Buffer -->
+                <div id="printable-receipt" class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 pb-14 shadow-md border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 transition-all">
                     
                     <!-- Receipt Header -->
                     <div class="flex justify-between items-start border-b border-slate-200 dark:border-slate-700 pb-5 mb-5">
@@ -304,8 +304,8 @@
                         <p id="preview-notes-text" class="text-slate-600 dark:text-slate-300 italic">Cash given for office stationery purchase and urgent courier dispatch.</p>
                     </div>
 
-                    <!-- Signatures with Increased Top Space & Vertical Buffer -->
-                    <div class="grid grid-cols-2 gap-8 pt-8 pb-4 border-t border-slate-200 dark:border-slate-700 text-center">
+                    <!-- Signatures Section with extra vertical padding -->
+                    <div class="grid grid-cols-2 gap-8 pt-8 pb-6 border-t border-slate-200 dark:border-slate-700 text-center">
                         <div>
                             <div class="h-10 flex items-end justify-center mb-1">
                                 <span class="font-bold text-xs truncate max-w-full text-slate-800 dark:text-slate-100" id="sig-receiver-name">Muhammad Ali</span>
@@ -329,6 +329,9 @@
                         <span>Generated via Office Cash Invoice Tool</span>
                         <span class="font-medium text-indigo-600 dark:text-indigo-400">@vexornull</span>
                     </div>
+
+                    <!-- Extra Safe Buffer Spacer inside Receipt for html2canvas -->
+                    <div class="h-6"></div>
                 </div>
 
                 <!-- Action Buttons -->
@@ -599,15 +602,15 @@
             showToast('History cleared.');
         }
 
-        // Enhanced downloadJPG with forced extra height calculation and bottom margin padding
+        // Bulletproof downloadJPG function with massive extra safety height buffer (+120px)
         function downloadJPG() {
             const receiptElement = document.getElementById('printable-receipt');
             showToast('Generating high-quality JPG image...', 'info');
             
             const originalStyle = receiptElement.style.cssText;
-            // Force full dynamic scroll height + extra safety margin so nothing cuts off at bottom
-            const computedHeight = receiptElement.scrollHeight + 50;
-            receiptElement.style.height = computedHeight + 'px';
+            const extraSafeHeight = receiptElement.scrollHeight + 120;
+            
+            receiptElement.style.height = extraSafeHeight + 'px';
             receiptElement.style.maxHeight = 'none';
             receiptElement.style.overflow = 'visible';
 
@@ -617,8 +620,8 @@
                 allowTaint: true,
                 backgroundColor: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
                 windowWidth: receiptElement.scrollWidth,
-                windowHeight: computedHeight,
-                scrollY: -window.scrollY,
+                windowHeight: extraSafeHeight,
+                scrollY: 0,
                 scrollX: 0
             }).then(canvas => {
                 receiptElement.style.cssText = originalStyle;
