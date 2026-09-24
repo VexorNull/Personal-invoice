@@ -606,16 +606,16 @@
             showToast('History cleared.');
         }
 
-        // Download as JPG using html2canvas (Fully Fixed Cut-off Issue)
+        // Download as JPG using html2canvas (Fully Fixed Clipping & Cut-off Issue)
         function downloadJPG() {
             const receiptElement = document.getElementById('printable-receipt');
             showToast('Generating high-quality JPG image...', 'info');
             
-            // Temporarily lock full dimensions for accurate full-height capture
+            // Apply explicit full height & unclip styling temporarily
             const originalStyle = receiptElement.style.cssText;
-            receiptElement.style.width = receiptElement.scrollWidth + 'px';
-            receiptElement.style.height = 'auto';
+            receiptElement.style.height = receiptElement.scrollHeight + 'px';
             receiptElement.style.maxHeight = 'none';
+            receiptElement.style.overflow = 'visible';
 
             html2canvas(receiptElement, {
                 scale: 3,
@@ -625,10 +625,9 @@
                 windowWidth: receiptElement.scrollWidth,
                 windowHeight: receiptElement.scrollHeight,
                 scrollY: -window.scrollY,
-                x: 0,
-                y: 0
+                scrollX: 0
             }).then(canvas => {
-                // Restore original style immediately
+                // Restore original styles
                 receiptElement.style.cssText = originalStyle;
 
                 const link = document.createElement('a');
