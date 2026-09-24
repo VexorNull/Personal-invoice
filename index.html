@@ -304,24 +304,9 @@
                         <p id="preview-notes-text" class="text-slate-600 dark:text-slate-300 italic">Cash given for office stationery purchase and urgent courier dispatch.</p>
                     </div>
 
-                    <!-- Signatures -->
-                    <div class="grid grid-cols-2 gap-6 pt-4 border-t border-slate-200 dark:border-slate-700 text-center">
-                        <div>
-                            <div class="h-8 flex items-end justify-center">
-                                <span class="font-semibold text-xs truncate max-w-full" id="sig-receiver-name">Muhammad Ali</span>
-                            </div>
-                            <div class="border-t border-slate-300 dark:border-slate-600 mt-1 pt-1">
-                                <span class="text-[10px] uppercase text-slate-400 font-medium">Receiver Signature</span>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="h-8 flex items-end justify-center">
-                                <span class="font-semibold text-xs truncate max-w-full text-indigo-600 dark:text-indigo-400" id="sig-issuer-name">Tanveer Hussain</span>
-                            </div>
-                            <div class="border-t border-slate-300 dark:border-slate-600 mt-1 pt-1">
-                                <span class="text-[10px] uppercase text-slate-400 font-medium">Authorized Signature</span>
-                            </div>
-                        </div>
+                    <!-- Computer Generated Notice (Replaced Signatures) -->
+                    <div class="pt-4 pb-2 border-t border-slate-200 dark:border-slate-700 text-center">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Computer Generated Invoice — Signature Not Required</p>
                     </div>
 
                     <!-- Hidden Brand Stamp for JPG export -->
@@ -493,8 +478,6 @@
             document.getElementById('preview-payment').innerText = payment + ' Payment';
             document.getElementById('preview-issuer').innerText = issuer;
             document.getElementById('preview-date').innerText = formattedDate;
-            document.getElementById('sig-receiver-name').innerText = receiver;
-            document.getElementById('sig-issuer-name').innerText = issuer;
 
             // Notes
             const notesBox = document.getElementById('preview-notes-box');
@@ -666,6 +649,7 @@
                          `*Total Paid:* *Rs. ${total.toLocaleString()}*%0A` +
                          `*Paid By:* ${issuer}%0A` +
                          `--------------------------------%0A` +
+                         `_Computer Generated Invoice - Signature not required_%0A` +
                          `_Created by Tanveer Hussain (@vexornull)_`;
 
             const whatsappUrl = `https://wa.me/?text=${text}`;
