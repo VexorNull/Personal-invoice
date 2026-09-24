@@ -606,13 +606,16 @@
             showToast('History cleared.');
         }
 
-        // Download as JPG using html2canvas (Fixed cut-off issue)
+        // Download as JPG using html2canvas (Fully Fixed Cut-off Issue)
         function downloadJPG() {
             const receiptElement = document.getElementById('printable-receipt');
             showToast('Generating high-quality JPG image...', 'info');
             
-            // Add a temporary clean bottom padding to avoid border clipping during canvas rendering
-            receiptElement.style.paddingBottom = '30px';
+            // Temporarily lock full dimensions for accurate full-height capture
+            const originalStyle = receiptElement.style.cssText;
+            receiptElement.style.width = receiptElement.scrollWidth + 'px';
+            receiptElement.style.height = 'auto';
+            receiptElement.style.maxHeight = 'none';
 
             html2canvas(receiptElement, {
                 scale: 3,
@@ -621,10 +624,12 @@
                 backgroundColor: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
                 windowWidth: receiptElement.scrollWidth,
                 windowHeight: receiptElement.scrollHeight,
-                scrollY: -window.scrollY
+                scrollY: -window.scrollY,
+                x: 0,
+                y: 0
             }).then(canvas => {
-                // Reset padding back
-                receiptElement.style.paddingBottom = '';
+                // Restore original style immediately
+                receiptElement.style.cssText = originalStyle;
 
                 const link = document.createElement('a');
                 link.download = `Expense-Receipt-${document.getElementById('invoice-no').value || 'Voucher'}.jpg`;
@@ -633,7 +638,7 @@
                 showToast('Receipt saved as JPG successfully!');
             }).catch(err => {
                 console.error(err);
-                receiptElement.style.paddingBottom = '';
+                receiptElement.style.cssText = originalStyle;
                 showToast('Error generating image.', 'error');
             });
         }
