@@ -107,7 +107,7 @@
                 width: 100%;
                 box-shadow: none !important;
                 margin: 0 !important;
-                padding: 20px !important;
+                padding: 30px !important;
             }
         }
     </style>
@@ -235,8 +235,8 @@
         <div class="lg:col-span-5 space-y-6">
             <div class="sticky top-20 space-y-4">
                 
-                <!-- Printable Receipt Card -->
-                <div id="printable-receipt" class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 shadow-md border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 transition-all">
+                <!-- Printable Receipt Card with Increased Padding and Bottom Buffer -->
+                <div id="printable-receipt" class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 pb-10 shadow-md border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 transition-all">
                     
                     <!-- Receipt Header -->
                     <div class="flex justify-between items-start border-b border-slate-200 dark:border-slate-700 pb-5 mb-5">
@@ -304,28 +304,28 @@
                         <p id="preview-notes-text" class="text-slate-600 dark:text-slate-300 italic">Cash given for office stationery purchase and urgent courier dispatch.</p>
                     </div>
 
-                    <!-- Signatures -->
-                    <div class="grid grid-cols-2 gap-6 pt-4 border-t border-slate-200 dark:border-slate-700 text-center">
+                    <!-- Signatures with Increased Top Space & Vertical Buffer -->
+                    <div class="grid grid-cols-2 gap-8 pt-8 pb-4 border-t border-slate-200 dark:border-slate-700 text-center">
                         <div>
-                            <div class="h-8 flex items-end justify-center">
-                                <span class="font-semibold text-xs truncate max-w-full" id="sig-receiver-name">Muhammad Ali</span>
+                            <div class="h-10 flex items-end justify-center mb-1">
+                                <span class="font-bold text-xs truncate max-w-full text-slate-800 dark:text-slate-100" id="sig-receiver-name">Muhammad Ali</span>
                             </div>
-                            <div class="border-t border-slate-300 dark:border-slate-600 mt-1 pt-1">
-                                <span class="text-[10px] uppercase text-slate-400 font-medium">Receiver Signature</span>
+                            <div class="border-t-2 border-slate-300 dark:border-slate-600 pt-1.5">
+                                <span class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Receiver Signature</span>
                             </div>
                         </div>
                         <div>
-                            <div class="h-8 flex items-end justify-center">
-                                <span class="font-semibold text-xs truncate max-w-full text-indigo-600 dark:text-indigo-400" id="sig-issuer-name">Tanveer Hussain</span>
+                            <div class="h-10 flex items-end justify-center mb-1">
+                                <span class="font-bold text-xs truncate max-w-full text-indigo-600 dark:text-indigo-400" id="sig-issuer-name">Tanveer Hussain</span>
                             </div>
-                            <div class="border-t border-slate-300 dark:border-slate-600 mt-1 pt-1">
-                                <span class="text-[10px] uppercase text-slate-400 font-medium">Authorized Signature</span>
+                            <div class="border-t-2 border-slate-300 dark:border-slate-600 pt-1.5">
+                                <span class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Authorized Signature</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Hidden Brand Stamp for JPG export -->
-                    <div class="mt-4 pt-3 border-t border-dashed border-slate-200 dark:border-slate-700 flex justify-between items-center text-[10px] text-slate-400">
+                    <!-- Brand Stamp -->
+                    <div class="mt-6 pt-4 border-t border-dashed border-slate-200 dark:border-slate-700 flex justify-between items-center text-[11px] text-slate-400">
                         <span>Generated via Office Cash Invoice Tool</span>
                         <span class="font-medium text-indigo-600 dark:text-indigo-400">@vexornull</span>
                     </div>
@@ -407,7 +407,6 @@
 
         // Initialize App on Load
         window.onload = function() {
-            // Set current date/time in local datetime-local format
             const now = new Date();
             const tzOffset = now.getTimezoneOffset() * 60000;
             const localISOTime = (new Date(now - tzOffset)).toISOString().slice(0, 16);
@@ -479,7 +478,6 @@
             const issuer = document.getElementById('issuer-name').value || 'Manager';
             const notes = document.getElementById('invoice-notes').value;
 
-            // Format Date
             let formattedDate = 'N/A';
             if (dateVal) {
                 const d = new Date(dateVal);
@@ -496,7 +494,6 @@
             document.getElementById('sig-receiver-name').innerText = receiver;
             document.getElementById('sig-issuer-name').innerText = issuer;
 
-            // Notes
             const notesBox = document.getElementById('preview-notes-box');
             if (notes.trim()) {
                 notesBox.style.display = 'block';
@@ -505,7 +502,6 @@
                 notesBox.style.display = 'none';
             }
 
-            // Render Preview Table Items & Calculate Total
             let total = 0;
             const previewItemsList = document.getElementById('preview-items-list');
             previewItemsList.innerHTML = '';
@@ -526,19 +522,16 @@
             document.getElementById('preview-total').innerText = 'Rs. ' + total.toLocaleString();
             document.getElementById('preview-words').innerText = numberToWords(total) + ' Only';
 
-            // Auto-save to localStorage
             saveToLocalStorage({
                 company, invNo, receiver, dateVal, category, payment, issuer, notes, items, total
             });
         }
 
-        // Convert number to words helper
         function numberToWords(num) {
             if (num === 0) return 'Zero Rupees';
             return num.toLocaleString() + ' Rupees';
         }
 
-        // LocalStorage History Management
         function saveToLocalStorage(invoiceData) {
             let history = JSON.parse(localStorage.getItem('office_invoices_history') || '[]');
             const existingIndex = history.findIndex(h => h.invNo === invoiceData.invNo);
@@ -606,14 +599,15 @@
             showToast('History cleared.');
         }
 
-        // Download as JPG using html2canvas (Fully Fixed Clipping & Cut-off Issue)
+        // Enhanced downloadJPG with forced extra height calculation and bottom margin padding
         function downloadJPG() {
             const receiptElement = document.getElementById('printable-receipt');
             showToast('Generating high-quality JPG image...', 'info');
             
-            // Apply explicit full height & unclip styling temporarily
             const originalStyle = receiptElement.style.cssText;
-            receiptElement.style.height = receiptElement.scrollHeight + 'px';
+            // Force full dynamic scroll height + extra safety margin so nothing cuts off at bottom
+            const computedHeight = receiptElement.scrollHeight + 50;
+            receiptElement.style.height = computedHeight + 'px';
             receiptElement.style.maxHeight = 'none';
             receiptElement.style.overflow = 'visible';
 
@@ -623,11 +617,10 @@
                 allowTaint: true,
                 backgroundColor: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
                 windowWidth: receiptElement.scrollWidth,
-                windowHeight: receiptElement.scrollHeight,
+                windowHeight: computedHeight,
                 scrollY: -window.scrollY,
                 scrollX: 0
             }).then(canvas => {
-                // Restore original styles
                 receiptElement.style.cssText = originalStyle;
 
                 const link = document.createElement('a');
@@ -642,7 +635,6 @@
             });
         }
 
-        // Send via WhatsApp
         function sendWhatsApp() {
             const receiver = document.getElementById('receiver-name').value || 'Employee';
             const invNo = document.getElementById('invoice-no').value || 'INV-001';
@@ -677,7 +669,6 @@
             showToast('Opening WhatsApp with receipt details...');
         }
 
-        // Reset Form
         function resetForm() {
             document.getElementById('invoice-no').value = 'INV-' + Math.floor(1000 + Math.random() * 9000);
             document.getElementById('receiver-name').value = '';
@@ -687,7 +678,6 @@
             showToast('Form reset successfully.');
         }
 
-        // Toast notification helper
         function showToast(msg, type = 'success') {
             const toast = document.getElementById('toast');
             const msgEl = document.getElementById('toast-msg');
@@ -706,7 +696,6 @@
             }, 3000);
         }
 
-        // Dark Mode Toggle
         function toggleDarkMode() {
             const html = document.documentElement;
             const icon = document.getElementById('theme-icon');
@@ -721,7 +710,6 @@
             }
         }
 
-        // Load saved theme preference
         if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
             document.getElementById('theme-icon').className = 'fa-solid fa-sun';
